@@ -1,0 +1,43 @@
+<root>
+    <BehaviorTree>
+        <Sequence name="MainSeq">
+            <Action number="3" ID="CollectWaypoints"/>
+            <Action ID="Sleep"/>
+            <Decorator num_attempts="4" ID="Repeat">
+                <Sequence name="ExplorationSeq">
+                    <Action ID="PopWaypoint"/>
+                    <Action ID="MoveBase" destination="NextWaypoint"/>
+                    <Action ID="Explore" tag_id="0"/>
+                </Sequence>
+            </Decorator>
+            <Action ID="Sleep"/>
+            <Action ID="MoveBase" destination="BaseStation"/>
+        </Sequence>
+    </BehaviorTree>
+    
+    <BehaviorTreeMetaModel>
+        <Actions>
+            <Action ID="Sleep"/>
+            <Action ID="CollectWaypoints">
+                <Parameter label="number" type="Int"/>
+            </Action>
+            <Action ID="PopWaypoint"/>
+            <Action ID="MoveBase">
+                <Parameter label="destination" options="NextWaypoint;BaseStation" type="Combo"/>
+            </Action>
+            <Action ID="Explore">
+                <Parameter label="tag_id" type="Int"/>
+            </Action>
+        </Actions>
+        <Decorators>
+            <Decorator ID="Invert"/>
+            <Decorator ID="RetryUntilSuccesfull">
+                <Parameter label="num_attempts" type="Int"/>
+            </Decorator>
+            <Decorator ID="Repeat">
+                <Parameter label="num_attempts" type="Int"/>
+            </Decorator>
+        </Decorators>
+    </BehaviorTreeMetaModel>
+</root>
+

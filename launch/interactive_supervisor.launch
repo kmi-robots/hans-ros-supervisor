@@ -1,0 +1,6 @@
+<launch>
+  <node pkg="grape_supervisor" type="grape_supervisor" name="grape_supervisor" output="screen" >
+	<param name="file" value="$(find grape_supervisor)/interactiveTest.xml"/>
+  </node>
+</launch>
+
