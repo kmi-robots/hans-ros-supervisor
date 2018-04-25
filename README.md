@@ -1,2 +1,3 @@
 # supervisor
-supervisor and coordinator of the H&amp;S robot
+dependencies:
+https://github.com/Eurecat-Robotics/BehaviorTree.CPP.git
