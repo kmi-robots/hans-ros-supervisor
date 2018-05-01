@@ -15,7 +15,7 @@ void CollectWaypointsAction::collectWaypointsCallback(const geometry_msgs::PoseS
 
 BT::State CollectWaypointsAction::spin() {
     if (!_running) {
-        _waypoints_sub  = _nh.subscribe("/move_base_simple/goal", 1, &CollectWaypointsAction::collectWaypointsCallback, this);
+        _waypoints_sub  = _nh.subscribe("/waypoints", 1, &CollectWaypointsAction::collectWaypointsCallback, this);
         _running = true;
         ROS_INFO_STREAM("Subscription active");
         return BT::State::RUNNING;

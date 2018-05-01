@@ -65,6 +65,7 @@ add_executable(supervisor
     src/collectwaypoints_action.cpp
     src/explore_action.cpp
     )
+add_dependencies(supervisor room_analysis_generate_messages_cpp)
 target_link_libraries(supervisor ${catkin_LIBRARIES})
 
 #############
