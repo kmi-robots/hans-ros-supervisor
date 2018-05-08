@@ -2,7 +2,9 @@
 #include "supervisor/movebase_action.h"
 #include "supervisor/collectwaypoints_action.h"
 #include "supervisor/explore_action.h"
-#include <signal.h>
+#include "signal.h"
+
+#include "stdlib.h"
 
 using namespace BT;
 
@@ -55,7 +57,10 @@ int main(int argc, char **argv) {
     // It could be loaded from file.
     tinyxml2::XMLDocument bt_definition;
     if (filename.empty()) {
-        filename = "/home/gianluca/catkin_ws/src/supervisor/StateMachine.xml";
+        char* pHome;
+        pHome = getenv("HOME");
+        filename = std::string(pHome);
+        filename = filename + "/StateMachine.xml";
     }
     ROS_INFO_STREAM("opening file " << filename);
     if (bt_definition.LoadFile(filename.c_str()) != tinyxml2::XML_SUCCESS) {

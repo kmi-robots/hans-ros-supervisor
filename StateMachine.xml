@@ -1,9 +1,9 @@
 <root>
     <BehaviorTree>
         <Sequence name="MainSeq">
-            <Action number="3" ID="CollectWaypoints"/>
+            <Action number="-1" ID="CollectWaypoints"/>
             <Action ID="Sleep"/>
-            <Decorator num_attempts="4" ID="Repeat">
+            <Decorator num_attempts="10" ID="Repeat">
                 <Sequence name="ExplorationSeq">
                     <Action ID="PopWaypoint"/>
                     <Action ID="MoveBase" destination="NextWaypoint"/>

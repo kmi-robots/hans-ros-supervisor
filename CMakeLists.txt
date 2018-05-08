@@ -1,8 +1,12 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(supervisor)
 
-## Compile as C++11, supported in ROS Kinetic and newer
-set(CMAKE_CXX_STANDARD 11)
+include(FindPkgConfig)
+pkg_check_modules(CURLPP REQUIRED curlpp)
+
+set( CMAKE_CXX_STANDARD 11 )
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -66,7 +70,7 @@ add_executable(supervisor
     src/explore_action.cpp
     )
 add_dependencies(supervisor room_analysis_generate_messages_cpp)
-target_link_libraries(supervisor ${catkin_LIBRARIES})
+target_link_libraries(supervisor ${catkin_LIBRARIES} ${CURLPP_LDFLAGS})
 
 #############
 ## Install ##

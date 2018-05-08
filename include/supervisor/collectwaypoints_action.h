@@ -5,6 +5,10 @@
 #include "geometry_msgs/PoseStamped.h"
 #include "geometry_msgs/Pose.h"
 
+#include "supervisor/json.hpp"
+
+using json = nlohmann::json;
+
 class CollectWaypointsAction : public BT::ActionNode<CollectWaypointsAction> {
     public:
         CollectWaypointsAction(ros::NodeHandle &nh, const std::string &name, const BT::TextParameters &params);
@@ -23,6 +27,10 @@ class CollectWaypointsAction : public BT::ActionNode<CollectWaypointsAction> {
         std::deque<geometry_msgs::Pose> _route;
         bool _running;
         int _number;
+        const std::string ID = "collectWaypoints";
 
         void collectWaypointsCallback(const geometry_msgs::PoseStamped::ConstPtr &msg);
+        std::future<std::string> invoke();
+        void prepareRoute(json djin);
+        geometry_msgs::Pose jsonToPose(json jpose);
 };
