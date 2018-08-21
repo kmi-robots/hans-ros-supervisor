@@ -22,7 +22,7 @@ std::future<std::string> CollectWaypointsAction::invoke() {
   return std::async(std::launch::async, [this]() {
       curlpp::Cleanup clean;
       curlpp::Easy request;
-      request.setOpt(new curlpp::options::Url("http://137.108.116.193:5000/semanticmap-service"));
+      request.setOpt(new curlpp::options::Url("http://137.108.125.184:5000/semanticmap-service"));
       json j;
       j["semantic_map_queries"] = {{{"name", this->ID}, {"query","getHeaterFreeAreas"}}};
       std::stringstream ss;

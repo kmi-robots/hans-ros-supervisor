@@ -5,7 +5,7 @@ ExploreAction::ExploreAction(const std::string &action_name, const BT::TextParam
     : ActionNode(action_name), _explore("/Analyzer/explore", true), _running(false) {
     assert(params.size() == 1);
     // there must be a single parameter
-    _goal.tag_number = std::stoi(params.begin()->second);
+    _goal.classes = params.begin()->second;
 }
 
 

@@ -11,7 +11,7 @@ class ExploreAction : public BT::ActionNode<ExploreAction> {
 
         static const BT::TextParametersMap &RequiredParameters() {
             static BT::TextParametersMap required = { std::pair<std::string, BT::TreeNodeParameter>(
-                    "tag_id", { BT::ParameterType::INTEGER, "0" })};
+                    "classes", { BT::ParameterType::TEXT, "Heater" })};
             return required;
         }
 

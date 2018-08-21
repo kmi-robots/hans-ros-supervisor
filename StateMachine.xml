@@ -7,7 +7,7 @@
                 <Sequence name="ExplorationSeq">
                     <Action ID="PopWaypoint"/>
                     <Action ID="MoveBase" destination="NextWaypoint"/>
-                    <Action ID="Explore" tag_id="0"/>
+                    <Action ID="Explore" classes="Heater,Bin,Chair"/>
                 </Sequence>
             </Decorator>
             <Action ID="Sleep"/>
