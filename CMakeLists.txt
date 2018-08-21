@@ -18,7 +18,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
   tf
-  behavior_tree_cpp
+  behavior_tree_core
   room_analysis
 )
 
