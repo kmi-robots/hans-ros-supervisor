@@ -1,28 +1,28 @@
 #pragma once
-#include <behavior_tree/BehaviorTree.h>
+#include <behavior_tree_core/behavior_tree.h>
 #include <ros/ros.h>
 #include <move_base_msgs/MoveBaseAction.h>
 #include <actionlib/client/simple_action_client.h>
 #include <tf/transform_listener.h>
 
-class MoveBaseAction : public BT::ActionNode<MoveBaseAction> {
+using namespace BT;
+
+class MoveBaseAction : public ActionNodeBase {
     public:
         typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
 
-        MoveBaseAction(const std::string &action_name, const BT::TextParameters &params);
-
-        static const BT::TextParametersMap &RequiredParameters() {
-            static BT::TextParametersMap required = { std::pair<std::string, BT::TreeNodeParameter>(
-                    "destination", { BT::ParameterType::COMBO_TEXT, "NextWaypoint;BaseStation" })};
-            return required;
+        MoveBaseAction(const std::string &action_name, const NodeParameters &params);
+        
+        static const NodeParameters& requiredNodeParameters() {
+            static NodeParameters params = {{"destination","NextWaypoint"}};
+            return params;
         }
 
-        virtual BT::State spin() override;
+        virtual NodeStatus tick() override;
         virtual void halt() override;
     private:
         MoveBaseClient  _move_base;
         std::string     _destination;
         move_base_msgs::MoveBaseGoal _goal;
-        bool _running;
         tf::TransformListener _tf_listener;
 };

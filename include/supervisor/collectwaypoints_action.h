@@ -1,6 +1,7 @@
 #pragma once
 #include <deque>
-#include "behavior_tree/BehaviorTree.h"
+#include <future>
+#include "behavior_tree_core/behavior_tree.h"
 #include "ros/ros.h"
 #include "geometry_msgs/PoseStamped.h"
 #include "geometry_msgs/Pose.h"
@@ -9,23 +10,22 @@
 
 using json = nlohmann::json;
 
-class CollectWaypointsAction : public BT::ActionNode<CollectWaypointsAction> {
-    public:
-        CollectWaypointsAction(ros::NodeHandle &nh, const std::string &name, const BT::TextParameters &params);
+using namespace BT;
 
-        static const BT::TextParametersMap &RequiredParameters() {
-            static BT::TextParametersMap required = { std::pair<std::string, BT::TreeNodeParameter>(
-                    "number", { BT::ParameterType::INTEGER, "3" })};
-            return required;
+class CollectWaypointsAction : public ActionNodeBase {
+    public:
+        CollectWaypointsAction(const std::string &name, const NodeParameters &params);
+        
+        static const NodeParameters& requiredNodeParameters() {
+            static NodeParameters params = {{"number","3"}};
+            return params;
         }
 
-        virtual BT::State spin() override;
+        virtual NodeStatus tick() override;
         virtual void halt() override;
     private:
-        ros::NodeHandle &_nh;
         ros::Subscriber _waypoints_sub;
         std::deque<geometry_msgs::Pose> _route;
-        bool _running;
         int _number;
         const std::string ID = "collectWaypoints";
 

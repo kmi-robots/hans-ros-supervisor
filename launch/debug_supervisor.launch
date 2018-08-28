@@ -1,0 +1,4 @@
+<launch>
+  <node pkg="supervisor" type="supervisor" name="supervisor" output="screen" launch-prefix="xterm -e gdb --args"  />
+</launch>
+

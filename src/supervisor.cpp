@@ -1,21 +1,25 @@
 #include "supervisor/supervisor.h"
-#include "behavior_tree/BehaviorTree.h"
 #include "move_base_msgs/MoveBaseAction.h"
 #include "tf/tf.h"
 
-Supervisor::Supervisor(BT::BlackBoard &blackboard): _blackboard(&blackboard), _route_initialized(false), _route_frame_id("/map") {
+Supervisor::Supervisor(std::shared_ptr<BT::Blackboard> blackboard)
+            : _blackboard(blackboard), _route_initialized(false), _route_frame_id("/map") { }
+            
+BT::NodeStatus Supervisor::sleepOneSecond() {
+    ROS_INFO_STREAM("Sleeping");
+    ros::Duration(1).sleep();
+    return BT::NodeStatus::SUCCESS;
 }
 
-BT::State Supervisor::popWaypoint() {
+BT::NodeStatus Supervisor::popWaypoint() {
     if (!_route_initialized) {
         if (!_blackboard->get("route", _route))
-            return BT::State::FAILURE;
-        _blackboard->erase("route");
+            return BT::NodeStatus::FAILURE;
         _route_initialized = true;
     }
     if (_route.empty()) {
         _route_initialized = false;
-        return BT::State::FAILURE;
+        return BT::NodeStatus::FAILURE;
     }
     geometry_msgs::Pose point = std::move(_route.front());
     _route.pop_front();
@@ -28,5 +32,5 @@ BT::State Supervisor::popWaypoint() {
     ROS_INFO_STREAM("next waypoint is: (" << point.position.x << "," << point.position.y << ")");
     ROS_INFO_STREAM("there are " << _route.size() << " waypoints left");
 
-    return BT::State::SUCCESS;
+    return BT::NodeStatus::SUCCESS;
 }

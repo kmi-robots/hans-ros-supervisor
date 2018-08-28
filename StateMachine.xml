@@ -1,21 +1,22 @@
-<root>
-    <BehaviorTree>
+<root main_tree_to_execute="MainTree" >
+    <BehaviorTree ID="MainTree">
         <Sequence name="MainSeq">
-            <Action number="-1" ID="CollectWaypoints"/>
-            <Action ID="Sleep"/>
+            <CollectWaypoints number="3" />
+<!--             <Sleep /> -->
             <Decorator num_attempts="10" ID="Repeat">
                 <Sequence name="ExplorationSeq">
-                    <Action ID="PopWaypoint"/>
-                    <Action ID="MoveBase" destination="NextWaypoint"/>
-                    <Action ID="Explore" classes="Heater,Bin,Chair"/>
+                    <PopWaypoint/>
+                    <MoveBase destination="NextWaypoint" />
+<!-- Heater - FireExtinguisher - FireExtinguisherLabel - FireActionNotice -->
+<!--                     <Explore classes="Heater,Bin,Chair" /> -->
                 </Sequence>
             </Decorator>
-            <Action ID="Sleep"/>
-            <Action ID="MoveBase" destination="BaseStation"/>
+<!--             <Sleep /> -->
+            <MoveBase destination="BaseStation" />
         </Sequence>
     </BehaviorTree>
     
-    <BehaviorTreeMetaModel>
+<!--    <BehaviorTreeMetaModel>
         <Actions>
             <Action ID="Sleep"/>
             <Action ID="CollectWaypoints">
@@ -38,6 +39,6 @@
                 <Parameter label="num_attempts" type="Int"/>
             </Decorator>
         </Decorators>
-    </BehaviorTreeMetaModel>
+    </BehaviorTreeMetaModel>-->
 </root>
 
