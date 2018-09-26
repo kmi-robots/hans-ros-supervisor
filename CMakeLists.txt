@@ -72,6 +72,9 @@ add_executable(supervisor
 add_dependencies(supervisor room_analysis_generate_messages_cpp)
 target_link_libraries(supervisor ${catkin_LIBRARIES} ${CURLPP_LDFLAGS})
 
+add_executable(test_supervisor src/test_supervisor_main.cpp)
+target_link_libraries(test_supervisor ${catkin_LIBRARIES} ${CURLPP_LDFLAGS})
+
 #############
 ## Install ##
 #############

@@ -43,4 +43,5 @@ void ExploreAction::halt() {
         _explore.cancelAllGoals();
         _running = false;
     }
+    setStatus(NodeStatus::IDLE);
 }

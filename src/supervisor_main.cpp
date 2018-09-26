@@ -35,18 +35,21 @@ int main(int argc, char **argv) {
         filename = filename + "/StateMachine.xml";
     }
     ROS_INFO_STREAM("opening file " << filename);
-    std::string file = "/home/gianluca/StateMachine.xml";
-    auto res = buildTreeFromFile(bt_factory, file, blackboard);
+    //TODO temporary hardcode for testing
+    std::string file = "/home/gianluca/catkin_ws/src/supervisor/StateMachine.xml";
     
-    const TreeNode::Ptr& root_node = res.first;
-
+    blackboard->set("waypoints_number", 3);
+    
+    auto res = buildTreeFromFile(bt_factory, file, blackboard);
     
     ROS_INFO_STREAM("execution started");
     
-    BT::StdCoutLogger logger_cout(root_node.get());
+    BT::StdCoutLogger logger_cout(res.root_node);
     
-    while (ros::ok()) {
-        root_node->executeTick();
+//     while (ros::ok()) {
+    NodeStatus status = NodeStatus::RUNNING;
+    while( status == NodeStatus::RUNNING ) {
+        status = res.root_node->executeTick();
     }
 
     return 0;

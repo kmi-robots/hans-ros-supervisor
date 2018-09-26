@@ -6,6 +6,7 @@
 #include "curlpp/Easy.hpp"
 #include "curlpp/Options.hpp"
 #include "curlpp/Exception.hpp"
+#include "curlpp/Infos.hpp"
 
 CollectWaypointsAction::CollectWaypointsAction(const std::string &name, const BT::NodeParameters &params)
     : ActionNodeBase(name) {
@@ -28,7 +29,7 @@ std::future<std::string> CollectWaypointsAction::invoke() {
       //GET /query/list/rule-waypoints?rule=hsf:heaterFreeAreaRule
 //       request.setOpt(new curlpp::options::Url("http://137.108.125.184:5000/semanticmap-service"));
       request.setOpt(new curlpp::options::Url(
-          "http://137.108.125.184:5000/query/list/rule-waypoints?rule=hsf:heaterFreeAreaRule"));
+          "http://137.108.121.40:7070/query/list/rule-waypoints?rule=hsf:heaterFreeAreaRule"));
 //       json j;
 //       j["semantic_map_queries"] = {{{"name", this->ID}, {"query","getHeaterFreeAreas"}}};
 //       std::stringstream ss;
@@ -37,6 +38,7 @@ std::future<std::string> CollectWaypointsAction::invoke() {
       std::ostringstream response;
       request.setOpt(new curlpp::options::WriteStream(&response));
       request.perform();
+      std::cout<<curlpp::infos::ResponseCode::get(request)<<std::endl;
       return std::string(response.str());
     });
 }
@@ -46,7 +48,7 @@ void CollectWaypointsAction::prepareRoute(json djin) {
     for (json::iterator it = djin["results"].begin(); it != djin["results"].end(); ++it) {
         json j = *it;
         std::string s = j["coord"];
-        std::regex rgx("\\((-?\\d+),(-?\\d+)\\),*", std::regex_constants::ECMAScript);
+        std::regex rgx("\\((-?\\d+\\.?\\d*),(-?\\d+\\.?\\d*)\\),*", std::regex_constants::ECMAScript);
         auto words = std::sregex_iterator(s.begin(), s.end(), rgx);
         for (auto i = words; i != std::sregex_iterator(); ++i) {
             std::smatch match = *i;
@@ -60,28 +62,15 @@ void CollectWaypointsAction::prepareRoute(json djin) {
     }    
 };
 
-//deprecated
-geometry_msgs::Pose CollectWaypointsAction::jsonToPose(json jpose) {
-    geometry_msgs::Pose p;
-    p.position.x = jpose["position"]["x"];
-    p.position.y = jpose["position"]["y"];
-    p.position.z = jpose["position"]["z"];
-    
-    p.orientation.x = jpose["orientation"]["x"];
-    p.orientation.y = jpose["orientation"]["y"];
-    p.orientation.z = jpose["orientation"]["z"];
-    p.orientation.w = jpose["orientation"]["w"];
-    
-    return p;
-};
-
-BT::NodeStatus CollectWaypointsAction::tick() {  
-    ROS_INFO_STREAM("number is: "<<_number);
+BT::NodeStatus CollectWaypointsAction::tick() {
+    ROS_INFO_STREAM(",,number is: "<<_number);
     if(_number < 0) {
         std::future<std::string> response = invoke();
         response.wait();
         prepareRoute(json::parse(response.get()));
+        blackboard()->set("waypoints_number", _route.size());
     } else {
+        blackboard()->set("waypoints_number", _number);
         ros::NodeHandle nh;
         _waypoints_sub  = nh.subscribe("/waypoints", 1, &CollectWaypointsAction::collectWaypointsCallback, this);
         ROS_INFO_STREAM("Waiting for waypoints...");
@@ -106,4 +95,5 @@ void CollectWaypointsAction::halt() {
     if(_number > 0) 
         _waypoints_sub.shutdown();
     _route.clear();
+    setStatus(NodeStatus::IDLE);
 }

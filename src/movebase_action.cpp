@@ -65,4 +65,5 @@ BT::NodeStatus MoveBaseAction::tick() {
 
 void MoveBaseAction::halt() {
     _move_base.cancelAllGoals();
+    setStatus(NodeStatus::IDLE);
 }

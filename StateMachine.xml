@@ -1,44 +1,20 @@
-<root main_tree_to_execute="MainTree" >
-    <BehaviorTree ID="MainTree">
-        <Sequence name="MainSeq">
-            <CollectWaypoints number="3" />
-<!--             <Sleep /> -->
-            <Decorator num_attempts="10" ID="Repeat">
-                <Sequence name="ExplorationSeq">
-                    <PopWaypoint/>
-                    <MoveBase destination="NextWaypoint" />
-<!-- Heater - FireExtinguisher - FireExtinguisherLabel - FireActionNotice -->
-<!--                     <Explore classes="Heater,Bin,Chair" /> -->
-                </Sequence>
-            </Decorator>
-<!--             <Sleep /> -->
+ <root main_tree_to_execute = "MainTree" >
+     <BehaviorTree ID="MainTree">
+        <SequenceStar name="MainSeq">
+            <Action ID="CollectWaypoints" number="3" />
+            <RetryUntilSuccesful num_attempts="10" >
+                <Negation>
+                    <Sequence name="ExplorationSeq">
+                        <PopWaypoint/>
+                        <MoveBase destination="NextWaypoint" />
+                    </Sequence>
+                </Negation>
+            </RetryUntilSuccesful>
             <MoveBase destination="BaseStation" />
-        </Sequence>
-    </BehaviorTree>
-    
-<!--    <BehaviorTreeMetaModel>
-        <Actions>
-            <Action ID="Sleep"/>
-            <Action ID="CollectWaypoints">
-                <Parameter label="number" type="Int"/>
-            </Action>
-            <Action ID="PopWaypoint"/>
-            <Action ID="MoveBase">
-                <Parameter label="destination" options="NextWaypoint;BaseStation" type="Combo"/>
-            </Action>
-            <Action ID="Explore">
-                <Parameter label="tag_id" type="Int"/>
-            </Action>
-        </Actions>
-        <Decorators>
-            <Decorator ID="Invert"/>
-            <Decorator ID="RetryUntilSuccesfull">
-                <Parameter label="num_attempts" type="Int"/>
-            </Decorator>
-            <Decorator ID="Repeat">
-                <Parameter label="num_attempts" type="Int"/>
-            </Decorator>
-        </Decorators>
-    </BehaviorTreeMetaModel>-->
-</root>
+        </SequenceStar>
+     </BehaviorTree>
+ </root>
+
+<!-- Heater - FireExtinguisher - FireExtinguisherLabel - FireActionNotice -->
+<!-- <Explore classes="Heater,Bin,Chair" /> -->
 

@@ -32,5 +32,5 @@ class CollectWaypointsAction : public ActionNodeBase {
         void collectWaypointsCallback(const geometry_msgs::PoseStamped::ConstPtr &msg);
         std::future<std::string> invoke();
         void prepareRoute(json djin);
-        geometry_msgs::Pose jsonToPose(json jpose);
+//         geometry_msgs::Pose jsonToPose(json jpose);
 };
