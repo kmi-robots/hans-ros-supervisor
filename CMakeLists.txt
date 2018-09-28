@@ -22,6 +22,8 @@ find_package(catkin REQUIRED COMPONENTS
   room_analysis
 )
 
+find_package(Boost)
+
 
 ###################################
 ## catkin specific configuration ##
@@ -74,6 +76,13 @@ target_link_libraries(supervisor ${catkin_LIBRARIES} ${CURLPP_LDFLAGS})
 
 add_executable(test_supervisor src/test_supervisor_main.cpp)
 target_link_libraries(test_supervisor ${catkin_LIBRARIES} ${CURLPP_LDFLAGS})
+
+add_executable(simple_action_supervisor
+    src/full_supervisor.cpp
+    src/full_supervisor_main.cpp
+    )
+add_dependencies(simple_action_supervisor room_analysis_generate_messages_cpp)
+target_link_libraries(simple_action_supervisor ${catkin_LIBRARIES} ${CURLPP_LDFLAGS})
 
 #############
 ## Install ##

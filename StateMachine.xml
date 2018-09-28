@@ -1,16 +1,18 @@
  <root main_tree_to_execute = "MainTree" >
      <BehaviorTree ID="MainTree">
         <SequenceStar name="MainSeq">
-            <Action ID="CollectWaypoints" number="3" />
+<!--             <Action ID="CollectWaypoints" number="3" /> -->
+            <Action ID="CollectWaypoints"/>
             <RetryUntilSuccesful num_attempts="10" >
                 <Negation>
                     <Sequence name="ExplorationSeq">
                         <PopWaypoint/>
-                        <MoveBase destination="NextWaypoint" />
+<!--                         <MoveBase destination="NextWaypoint" /> -->
+                        <MoveBase />
                     </Sequence>
                 </Negation>
             </RetryUntilSuccesful>
-            <MoveBase destination="BaseStation" />
+<!--            <MoveBase destination="BaseStation" />-->
         </SequenceStar>
      </BehaviorTree>
  </root>

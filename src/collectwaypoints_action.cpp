@@ -28,6 +28,7 @@ std::future<std::string> CollectWaypointsAction::invoke() {
       curlpp::Easy request;
       //GET /query/list/rule-waypoints?rule=hsf:heaterFreeAreaRule
 //       request.setOpt(new curlpp::options::Url("http://137.108.125.184:5000/semanticmap-service"));
+// hsf -> http://data.open.ac.uk/kmi/hans#
       request.setOpt(new curlpp::options::Url(
           "http://137.108.121.40:7070/query/list/rule-waypoints?rule=hsf:heaterFreeAreaRule"));
 //       json j;
