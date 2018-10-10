@@ -1,19 +1,18 @@
 #include "behavior_tree_core/xml_parsing.h"
 #include "behavior_tree_core/bt_factory.h"
 #include "supervisor/full_supervisor.h"
-// #include "signal.h"
-// #include "stdlib.h"
+
+#include "supervisor/SendRule.h"
+#include "ros/package.h"
 
 #include "behavior_tree_logger/bt_cout_logger.h"
 
-int main(int argc, char **argv) {
-    ros::init(argc, argv, "simple_action_supervisor");
-
+bool executeBehavior(supervisor::SendRule::Request  &req, supervisor::SendRule::Response &res) {
     ros::NodeHandle nh("~");
-    std::string filename, url;
+    std::string url;
     int number;
-    nh.getParam("file", filename);
-    nh.param<int>("number", number, 3);
+//     nh.getParam("file", filename);
+    nh.param<int>("number", number, -1);
     nh.param<std::string>("url", url, "http://127.0.0.1:7070");
 
     BT::BehaviorTreeFactory bt_factory;
@@ -26,29 +25,34 @@ int main(int argc, char **argv) {
     bt_factory.registerSimpleAction("MoveBase", std::bind(&FullSupervisor::MoveBase, &supervisor));
     bt_factory.registerSimpleAction("Explore", std::bind(&FullSupervisor::Explore, &supervisor));
     
-    if (filename.empty()) {
-        char* pHome;
-        pHome = getenv("HOME");
-        filename = std::string(pHome);
-        filename = filename + "/StateMachine.xml";
-    }
+    std::string filename;
+    filename = ros::package::getPath("supervisor");
+    filename = filename + "/StateMachine.xml";
     ROS_INFO_STREAM("opening file " << filename);
-    //TODO temporary hardcode for testing
-    std::string file = "/home/gianluca/catkin_ws/src/supervisor/StateMachine.xml";
     
     blackboard->set("waypoints_number", 3);
     
-    auto res = buildTreeFromFile(bt_factory, file, blackboard);
+    auto tree = buildTreeFromFile(bt_factory, filename, blackboard);
     
     ROS_INFO_STREAM("execution started");
     
-    BT::StdCoutLogger logger_cout(res.root_node);
+    BT::StdCoutLogger logger_cout(tree.root_node);
     
-    while (ros::ok()) {
+    supervisor._rule = req.rule;
+    
     BT::NodeStatus status = BT::NodeStatus::RUNNING;
-//     while( status == BT::NodeStatus::RUNNING ) {
-        status = res.root_node->executeTick();
+    while( status == BT::NodeStatus::RUNNING ) {
+        status = tree.root_node->executeTick();
     }
+    
+    return true;
+}
 
+int main(int argc, char **argv) {
+    ros::init(argc, argv, "simple_action_supervisor");
+    ros::NodeHandle nh("~");
+    ros::ServiceServer service = nh.advertiseService("/execute_behavior", executeBehavior);
+    ros::spin();
+    
     return 0;
 }

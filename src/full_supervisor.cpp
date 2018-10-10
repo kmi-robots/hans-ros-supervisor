@@ -16,8 +16,8 @@
 
 FullSupervisor::FullSupervisor(int number, std::string url)
             : _number(number), _url(url), _route_initialized(false), _route_frame_id("/map"), 
-            _explore("/Analyzer/explore", true), _move_base("move_base", true) { }
-            
+            _explore("/Analyzer/explore", true), _move_base("/move_base", true) { }
+
 BT::NodeStatus FullSupervisor::sleepOneSecond() {
     ROS_INFO_STREAM("Sleeping");
     ros::Duration(1).sleep();
@@ -49,8 +49,9 @@ std::future<std::string> FullSupervisor::invoke() {
   return std::async(std::launch::async, [this]() {
       curlpp::Cleanup clean;
       curlpp::Easy request;
-      request.setOpt(new curlpp::options::Url(
-          _url + "/query/list/rule-waypoints?rule=http://data.open.ac.uk/kmi/hans#:heaterFreeAreaRule"));
+      ROS_INFO_STREAM("request: "<<_rule);
+      std::string query = curlpp::escape("http://data.open.ac.uk/kmi/hans#"+_rule);
+      request.setOpt(new curlpp::options::Url(_url + "/query/list/rule-waypoints?rule=" + query));
       std::ostringstream response;
       request.setOpt(new curlpp::options::WriteStream(&response));
       request.perform();
@@ -66,10 +67,14 @@ void FullSupervisor::prepareRoute(json djin) {
     for (json::iterator it = djin["results"].begin(); it != djin["results"].end(); ++it) {
         json j = *it;
         std::string s = j["coord"];
-        boost::geometry::model::polygon<point_type> poly;
-        boost::geometry::read_wkt(s, poly);
         point_type pt;
-        boost::geometry::centroid(poly, pt);
+        if(_rule=="fireExtinguisherLabelRule") {
+            boost::geometry::read_wkt(s, pt);
+        } else {
+            boost::geometry::model::polygon<point_type> poly;
+            boost::geometry::read_wkt(s, poly);
+            boost::geometry::centroid(poly, pt);
+        }        
         geometry_msgs::Pose p;
         p.position.x = pt.x();
         p.position.y = pt.y();
@@ -112,6 +117,7 @@ BT::NodeStatus FullSupervisor::Explore() {
     }
 
     ROS_INFO_STREAM("Starting exploration");
+    _goal.classes = "Heater,FireActionNotice,FireExtinguisherLabel";
     _explore.sendGoal(_goal);
     _explore.waitForResult();
 
@@ -124,8 +130,11 @@ BT::NodeStatus FullSupervisor::Explore() {
 
 BT::NodeStatus FullSupervisor::MoveBase() {
     if (!_move_base.isServerConnected()) {
-        ROS_ERROR("MoveBaseAction failed because server is not connected");
-        return BT::NodeStatus::FAILURE;
+        ros::Duration(1.5).sleep();
+        if (!_move_base.isServerConnected()) {
+            ROS_ERROR("MoveBaseAction failed because server is not connected");
+            return BT::NodeStatus::FAILURE;
+        }
     }
 
     static int ID = 0;
@@ -148,7 +157,4 @@ BT::NodeStatus FullSupervisor::MoveBase() {
         return BT::NodeStatus::FAILURE;
     }
 }
-
-// BT::NodeStatus FullSupervisor::GoHome() {
-// }
 

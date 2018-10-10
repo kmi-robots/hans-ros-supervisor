@@ -10,15 +10,14 @@
   <buildtool_depend>catkin</buildtool_depend>
 
   <depend>geometry_msgs</depend>
-  <depend>message_filters</depend>
   <depend>nav_msgs</depend>
   <depend>roscpp</depend>
   <depend>std_msgs</depend>
   <depend>tf</depend>
-  <depend>grape_msgs</depend>
   <depend>behavior_tree_cpp</depend>
-  <depend>moveit_core</depend>
-  <depend>moveit_ros_planning_interface</depend>
+  
+  <build_depend>message_generation</build_depend>
+  <exec_depend>message_runtime</exec_depend>
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>

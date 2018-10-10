@@ -13,13 +13,14 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
-  message_filters
   nav_msgs
   roscpp
   std_msgs
   tf
   behavior_tree_core
   room_analysis
+  message_generation
+  roslib
 )
 
 find_package(Boost)
@@ -34,12 +35,19 @@ find_package(Boost)
 ## LIBRARIES: libraries you create in this project that dependent projects also need
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
+
+add_service_files(
+  FILES
+  SendRule.srv
+)
+
+generate_messages()
+
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES
   CATKIN_DEPENDS
     geometry_msgs
-    message_filters
     nav_msgs roscpp
     std_msgs
     tf

@@ -26,11 +26,13 @@ class FullSupervisor {
         BT::NodeStatus collectWaypoints();
         BT::NodeStatus MoveBase();
         BT::NodeStatus Explore();
+        std::string _rule;
     private:
         void collectWaypointsCallback(const geometry_msgs::PoseStamped::ConstPtr &msg);
         std::future<std::string> invoke();
         void prepareRoute(json djin);
     protected:
+        
         int _number;
         std::string _url;
         geometry_msgs::Pose _next_waypoint;

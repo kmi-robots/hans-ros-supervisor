@@ -1,0 +1,4 @@
+<launch>
+  <node pkg="supervisor" type="simple_action_supervisor" name="supervisor" output="screen"/>
+</launch>
+
