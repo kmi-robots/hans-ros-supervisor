@@ -50,7 +50,7 @@ std::future<std::string> FullSupervisor::invoke() {
       curlpp::Cleanup clean;
       curlpp::Easy request;
       ROS_INFO_STREAM("request: "<<_rule);
-      std::string query = curlpp::escape("http://data.open.ac.uk/kmi/hans#"+_rule);
+      std::string query = curlpp::escape(_rule);
       request.setOpt(new curlpp::options::Url(_url + "/query/list/rule-waypoints?rule=" + query));
       std::ostringstream response;
       request.setOpt(new curlpp::options::WriteStream(&response));
@@ -68,7 +68,7 @@ void FullSupervisor::prepareRoute(json djin) {
         json j = *it;
         std::string s = j["coord"];
         point_type pt;
-        if(_rule=="fireExtinguisherLabelRule") {
+        if (s.find("POINT") == 0) {
             boost::geometry::read_wkt(s, pt);
         } else {
             boost::geometry::model::polygon<point_type> poly;
@@ -87,9 +87,23 @@ void FullSupervisor::prepareRoute(json djin) {
 BT::NodeStatus FullSupervisor::collectWaypoints() {
     ROS_INFO_STREAM("number is: "<<_number);
     if(_number < 0) {
-        std::future<std::string> response = invoke();
-        response.wait();
-        prepareRoute(json::parse(response.get()));
+        if(_rule=="http://data.open.ac.uk/kmi/hans#patrol") {
+            std::vector<std::pair<double, double>> v = {
+                {22.0, 0.3}, {-5.0, 1.63}, {7.6, 11.0}, {8.4, 16.5}, {30.8, 22.4}, {7.0, 22.0}, {-17.0, 12.0}, {-16.5, -3.75}
+            };
+            for(std::pair<double, double> i : v) {
+                geometry_msgs::Pose p;
+                p.position.x = i.first;
+                p.position.y = i.second;
+                p.position.z = 0.0;
+                p.orientation.w = 1.0;
+                _route.push_back(p);
+            }
+        } else {
+            std::future<std::string> response = invoke();
+            response.wait();
+            prepareRoute(json::parse(response.get()));
+        }
     } else {
         ros::NodeHandle nh;
         _waypoints_sub  = nh.subscribe("/waypoints", 1, &FullSupervisor::collectWaypointsCallback, this);
